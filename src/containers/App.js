@@ -2,7 +2,7 @@ import React from "react";
 import CardList from "../components/CardList";
 import SearchBox from "../components/SearchBox";
 import Scroll from "../components/Scroll";
-
+import ErrorBoundry from "../components/ErrorBoundry";
 class App extends React.Component{
    constructor(){
     super();
@@ -16,7 +16,10 @@ class App extends React.Component{
    componentDidMount(){
     fetch("https://jsonplaceholder.typicode.com/users")
     .then(res=>res.json())
-    .then(users=>this.setState({robots:users}))
+    .then(users=>{
+        console.log(users)
+        this.setState({robots:users});
+    })
     console.log('2')
    }
    handleSearchChange=(event)=>{
@@ -26,7 +29,7 @@ class App extends React.Component{
     const {robots,searchField} =this.state;
     console.log("3")
     const filteredRobots= robots.filter(robot=>robot.name.toLowerCase().includes(searchField));
-    if(robots.length){
+    if(!robots.length){
         return <h1>Loading...</h1>
     }
     else{
@@ -35,7 +38,9 @@ class App extends React.Component{
         <h1 className="f1 white">RoboFriends</h1>
         <SearchBox onSearchChange={this.handleSearchChange} />
         <Scroll>
+        <ErrorBoundry>
         <CardList data={filteredRobots}/>
+        </ErrorBoundry>   
         </Scroll>
         </div>
     )
